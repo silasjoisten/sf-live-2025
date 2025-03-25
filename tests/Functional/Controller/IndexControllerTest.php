@@ -16,6 +16,17 @@ final class IndexControllerTest extends FunctionalTestCase
         $this->browser()
             ->visit('/')
             ->assertSuccessful()
-            ->assertSeeIn('h1', 'Hello World!');
+            ->assertSeeIn('h1', 'Hello World in "en"!');
+    }
+
+    /**
+     * @test
+     */
+    public function unauthenticatedUserCanVisitGermanPage(): void
+    {
+        $this->browser()
+            ->visit('/de/')
+            ->assertSuccessful()
+            ->assertSeeIn('h1', 'Hello World in "de"!');
     }
 }
