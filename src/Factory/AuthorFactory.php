@@ -13,7 +13,7 @@ final class AuthorFactory extends ArrayFactory
     {
         $socials = [];
 
-        for ($i = 1; $i <= self::faker()->numberBetween(1,3); $i++) {
+        for ($i = 1; $i <= self::faker()->numberBetween(1, 3); ++$i) {
             $socials[] = [
                 'name' => self::faker()->sentence(),
                 'icon' => self::faker()->word(),
