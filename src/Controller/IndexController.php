@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Domain\Entity\Post;
 use Storyblok\Api\Domain\Value\Dto\Pagination;
+use Storyblok\Api\Domain\Value\Resolver\Relation;
+use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
 use Storyblok\Api\Request\StoriesRequest;
 use Storyblok\Api\StoriesApiInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,6 +32,10 @@ final class IndexController extends AbstractController
         $response = $this->stories->allByContentType('post', new StoriesRequest(
             language: $request->getLocale(),
             pagination: new Pagination($page, $limit),
+            withRelations: new RelationCollection([
+                new Relation('post.author'),
+                new Relation('post.category'),
+            ]),
         ));
 
         return $this->render('index.html.twig', [
