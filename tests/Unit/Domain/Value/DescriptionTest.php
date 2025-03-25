@@ -18,4 +18,24 @@ final class DescriptionTest extends UnitTestCase
 
         self::assertSame($expected, (new Description($expected))->value);
     }
+
+    /**
+     * @test
+     *
+     * @dataProvider invalidValues
+     */
+    public function invalid(string $value): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        new Description($value);
+    }
+
+    public function invalidValues(): iterable
+    {
+        yield 'to short' => ['a'];
+        yield 'to long' => [self::faker()->realTextBetween(201, 300)];
+        yield 'whitespace only' => [' '];
+        yield 'empty' => [''];
+    }
 }
