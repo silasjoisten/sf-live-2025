@@ -1,0 +1,32 @@
+{# @var post \App\Domain\Entity\Post #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title.value }}{% endblock %}
+
+{% block body %}
+    <article class="post-detail">
+        <a href="{{ path('index') }}">← Back to list</a>
+        <h1 class="post-title">{{ post.title.value }}</h1>
+
+        <div class="post-meta">
+            <ul class="inline-list">
+                <li>{{ post.author.name }}</li>
+                <li>&centerdot;</li>
+                <li>{{ post.category.name }}</li>
+            </ul>
+        </div>
+
+        <img class="post-image opacity-0" onload="this.classList.add('opacity-100')" src="{{ post.image.url }}" alt="{{ post.image.alt }}" />
+
+        <p class="post-description">{{ post.description.value }}</p>
+
+        <div class="post-content">
+{#            {{ post.content|rich_text|raw }}#}
+        </div>
+
+        <!-- Back to List Button -->
+        <div class="post-back">
+            <a href="{{ path('index') }}" class="btn-back">← Back to list</a>
+        </div>
+    </article>
+{% endblock %}
