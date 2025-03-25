@@ -23,4 +23,5 @@ vendor: composer.json composer.lock
 	@touch -mr $(shell ls -Atd $? | head -1) $@
 
 .PHONY: dev
-dev: vendor
+dev: vendor ## Starts the development server
+	symfony server:start -d
