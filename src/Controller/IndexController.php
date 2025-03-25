@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class IndexController extends AbstractController
 {
     public function __construct(
-        private readonly StoriesApiInterface $stories
+        private readonly StoriesApiInterface $stories,
     ) {
     }
 
@@ -33,6 +33,7 @@ final class IndexController extends AbstractController
         ));
 
         return $this->render('index.html.twig', [
+            'locale' => $request->getLocale(),
             'posts' => \array_map(static fn (array $post) => new Post($post), $response->stories),
             'page' => $page,
             'limit' => $limit,
