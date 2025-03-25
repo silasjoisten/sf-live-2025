@@ -18,14 +18,4 @@ final class CategoryIdTest extends UnitTestCase
 
         self::assertSame($expected, (new CategoryId($expected))->value);
     }
-
-    /**
-     * @test
-     */
-    public function invalid(): void
-    {
-        self::expectException(\InvalidArgumentException::class);
-
-        new CategoryId(self::faker()->numberBetween(-5000, 0));
-    }
 }

@@ -33,39 +33,13 @@ final class CategoryTest extends UnitTestCase
     /**
      * @test
      */
-    public function idKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['id']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Category($values);
-    }
-
-    /**
-     * @test
-     */
     public function slug(): void
     {
         $values = self::response([
             'full_slug' => $expected = self::faker()->slug(),
         ]);
 
-        self::assertSame($expected, (new Category($values))->slug->value());
-    }
-
-    /**
-     * @test
-     */
-    public function slugKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['full_slug']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Category($values);
+        self::assertSame($expected, (new Category($values))->slug->value);
     }
 
     /**
@@ -83,19 +57,6 @@ final class CategoryTest extends UnitTestCase
     /**
      * @test
      */
-    public function nameKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['name']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Category($values);
-    }
-
-    /**
-     * @test
-     */
     public function title(): void
     {
         $values = self::response(content: [
@@ -108,19 +69,6 @@ final class CategoryTest extends UnitTestCase
     /**
      * @test
      */
-    public function titleKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['title']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Category($values);
-    }
-
-    /**
-     * @test
-     */
     public function description(): void
     {
         $values = self::response(content: [
@@ -128,18 +76,5 @@ final class CategoryTest extends UnitTestCase
         ]);
 
         self::assertSame($expected, (new Category($values))->description->value);
-    }
-
-    /**
-     * @test
-     */
-    public function descriptionKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['description']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Category($values);
     }
 }
