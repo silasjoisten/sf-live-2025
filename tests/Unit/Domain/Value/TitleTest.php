@@ -18,4 +18,24 @@ final class TitleTest extends UnitTestCase
 
         self::assertSame($expected, (new Title($expected))->value);
     }
+
+    /**
+     * @test
+     *
+     * @dataProvider invalidValues
+     */
+    public function invalid(string $value): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        new Title($value);
+    }
+
+    public function invalidValues(): iterable
+    {
+        yield 'to short' => ['a'];
+        yield 'to long' => [self::faker()->realTextBetween(121, 200)];
+        yield 'whitespace only' => [' '];
+        yield 'empty' => [''];
+    }
 }

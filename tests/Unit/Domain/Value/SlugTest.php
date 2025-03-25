@@ -18,4 +18,24 @@ final class SlugTest extends UnitTestCase
 
         self::assertSame($expected, (new Slug($expected))->value);
     }
+
+    /**
+     * @test
+     *
+     * @dataProvider invalidValues
+     */
+    public function invalid(string $value): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        new Slug($value);
+    }
+
+    public function invalidValues(): iterable
+    {
+        yield 'whitespace only' => [' '];
+        yield 'empty' => [''];
+        yield 'invalid chars in valid text' => ['Привіт, світ!'];
+        yield 'invalid slug chars' => [':-'];
+    }
 }

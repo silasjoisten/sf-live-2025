@@ -18,4 +18,30 @@ final class RichTextTest extends UnitTestCase
 
         self::assertSame($values, (new RichText($values))->values);
     }
+
+    /**
+     * @test
+     */
+    public function valuesTypeKeyMustExist(): void
+    {
+        $values = self::richText();
+        unset($values['type']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new RichText($values);
+    }
+
+    /**
+     * @test
+     */
+    public function valuesContentKeyMustExist(): void
+    {
+        $values = self::richText();
+        unset($values['content']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new RichText($values);
+    }
 }
