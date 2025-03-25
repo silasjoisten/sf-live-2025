@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Value;
 
 use Webmozart\Assert\Assert;
+
 use function Symfony\Component\String\u;
 
 final readonly class Slug
