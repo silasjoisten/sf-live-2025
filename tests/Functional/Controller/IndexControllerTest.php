@@ -15,8 +15,8 @@ final class IndexControllerTest extends FunctionalTestCase
     public function unauthenticatedUserCanVisitPage(): void
     {
         $this->browser()
-            ->expectException(\TypeError::class)
             ->visit('/')
+            ->expectException(\TypeError::class)
             ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
