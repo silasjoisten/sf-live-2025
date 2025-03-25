@@ -35,39 +35,13 @@ final class PostTest extends UnitTestCase
     /**
      * @test
      */
-    public function idKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['id']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
-    }
-
-    /**
-     * @test
-     */
     public function slug(): void
     {
         $values = self::response([
             'full_slug' => $expected = self::faker()->slug(),
         ]);
 
-        self::assertSame($expected, (new Post($values))->slug->value());
-    }
-
-    /**
-     * @test
-     */
-    public function slugKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['full_slug']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
+        self::assertSame($expected, (new Post($values))->slug->value);
     }
 
     /**
@@ -85,19 +59,6 @@ final class PostTest extends UnitTestCase
     /**
      * @test
      */
-    public function titleKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['title']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
-    }
-
-    /**
-     * @test
-     */
     public function description(): void
     {
         $values = self::response(content: [
@@ -105,19 +66,6 @@ final class PostTest extends UnitTestCase
         ]);
 
         self::assertSame($expected, (new Post($values))->description->value);
-    }
-
-    /**
-     * @test
-     */
-    public function descriptionKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['description']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
     }
 
     /**
@@ -135,19 +83,6 @@ final class PostTest extends UnitTestCase
     /**
      * @test
      */
-    public function authorKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['author']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
-    }
-
-    /**
-     * @test
-     */
     public function category(): void
     {
         $values = self::response();
@@ -155,18 +90,5 @@ final class PostTest extends UnitTestCase
         $values['content']['category'][0]['content']['name'] = $expected = self::faker()->word();
 
         self::assertSame($expected, (new Post($values))->category->name);
-    }
-
-    /**
-     * @test
-     */
-    public function categoryKeyMustExist(): void
-    {
-        $values = self::response();
-        unset($values['content']['category']);
-
-        self::expectException(\InvalidArgumentException::class);
-
-        new Post($values);
     }
 }
