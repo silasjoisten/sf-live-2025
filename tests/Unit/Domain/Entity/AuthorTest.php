@@ -39,7 +39,7 @@ final class AuthorTest extends UnitTestCase
             'full_slug' => $expected = self::faker()->slug(),
         ]);
 
-        self::assertSame($expected, (new Author($values))->slug->value());
+        self::assertSame($expected, (new Author($values))->slug->value);
     }
 
     /**
