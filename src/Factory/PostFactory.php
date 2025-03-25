@@ -19,8 +19,26 @@ final class PostFactory extends ArrayFactory
             'content' => [
                 'title' => $title,
                 'description' => self::faker()->text(),
+                'image' => [
+                    'filename' => sprintf('https://picsum.photos/seed/%d/640/480', self::faker()->randomNumber()),
+                    'alt' => self::faker()->sentence(),
+                ],
                 'author' => AuthorFactory::createMany(1),
                 'category' => CategoryFactory::createMany(1),
+                'content' => [
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'text' => self::faker()->sentence(),
+                                    'type' => 'text',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ];
     }

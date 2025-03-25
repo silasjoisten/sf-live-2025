@@ -33,6 +33,19 @@ final class AuthorTest extends UnitTestCase
     /**
      * @test
      */
+    public function idKeyMustExist(): void
+    {
+        $values = self::response();
+        unset($values['id']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
+    }
+
+    /**
+     * @test
+     */
     public function slug(): void
     {
         $values = self::response([
@@ -40,6 +53,19 @@ final class AuthorTest extends UnitTestCase
         ]);
 
         self::assertSame($expected, (new Author($values))->slug->value);
+    }
+
+    /**
+     * @test
+     */
+    public function slugKeyMustExist(): void
+    {
+        $values = self::response();
+        unset($values['full_slug']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
     }
 
     /**
@@ -57,6 +83,19 @@ final class AuthorTest extends UnitTestCase
     /**
      * @test
      */
+    public function nameKeyMustExist(): void
+    {
+        $values = self::response();
+        unset($values['content']['name']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
+    }
+
+    /**
+     * @test
+     */
     public function bio(): void
     {
         $values = self::response(content: [
@@ -69,10 +108,78 @@ final class AuthorTest extends UnitTestCase
     /**
      * @test
      */
+    public function bioKeyMustExist(): void
+    {
+        $values = self::response();
+        unset($values['content']['bio']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
+    }
+
+    /**
+     * @test
+     */
     public function socials(): void
     {
         $values = self::response();
 
         self::assertCount(\count($values['content']['socials']), (new Author($values))->socials);
+    }
+
+    /**
+     * @test
+     */
+    public function socialsKeyMustExist(): void
+    {
+        $values = self::response();
+        unset($values['content']['socials']);
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
+    }
+
+    /**
+     * @test
+     */
+    public function socialsNameAllKeyMustExist(): void
+    {
+        $values = self::response();
+        $values['content']['socials'] = [
+            [
+                'name' => self::faker()->sentence(),
+                'icon' => self::faker()->word(),
+            ],
+            [
+                'icon' => self::faker()->word(),
+            ],
+        ];
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
+    }
+
+    /**
+     * @test
+     */
+    public function socialsIconAllKeyMustExist(): void
+    {
+        $values = self::response();
+        $values['content']['socials'] = [
+            [
+                'icon' => self::faker()->word(),
+            ],
+            [
+                'name' => self::faker()->sentence(),
+                'icon' => self::faker()->word(),
+            ],
+        ];
+
+        self::expectException(\InvalidArgumentException::class);
+
+        new Author($values);
     }
 }
