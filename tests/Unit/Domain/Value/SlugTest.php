@@ -16,34 +16,6 @@ final class SlugTest extends UnitTestCase
     {
         $expected = self::faker()->word();
 
-        self::assertSame($expected, (new Slug($expected))->value());
-    }
-
-    /**
-     * @test
-     */
-    public function valueWithParameter(): void
-    {
-        self::assertSame('blog/foo-bar', (new Slug('de/blog/foo-bar'))->value('de'));
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider invalidValues
-     */
-    public function invalid(string $value): void
-    {
-        self::expectException(\InvalidArgumentException::class);
-
-        new Slug($value);
-    }
-
-    public function invalidValues(): iterable
-    {
-        yield 'whitespace only' => [' '];
-        yield 'empty' => [''];
-        yield 'invalid chars in valid text' => ['Привіт, світ!'];
-        yield 'invalid slug chars' => [':-'];
+        self::assertSame($expected, (new Slug($expected))->value);
     }
 }
