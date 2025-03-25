@@ -3,16 +3,7 @@
 {% block title %}Welcome to MyBlog{% endblock %}
 
 {% block body %}
-    <h1 class="page-title">Welcome to MyBlog in {{ app.locale }}</h1>
-
-    <div class="category-list">
-        <a href="{{ path('index') }}" class="category-badge">All</a>
-        {% for category in categories %}
-            <a href="{{ path('index', { category: category.slug.value }) }}" class="category-badge">
-                {{ category.name }}
-            </a>
-        {% endfor %}
-    </div>
+    <h1 class="page-title">Welcome to MyBlog in {{ locale }}</h1>
 
     <div class="grid-list">
         {% for post in posts %}

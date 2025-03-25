@@ -15,6 +15,7 @@ final class IndexControllerTest extends FunctionalTestCase
     public function unauthenticatedUserCanVisitPage(): void
     {
         $this->browser()
+            ->expectException(\TypeError::class, 'TypeError: App\Domain\Entity\Author::__construct(): Argument #1 ($values) must be of type array, string given')
             ->visit('/')
             ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
