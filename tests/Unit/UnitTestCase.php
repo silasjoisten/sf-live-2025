@@ -15,7 +15,7 @@ abstract class UnitTestCase extends TestCase
 
     private static ?Generator $faker = null;
 
-    final static protected function faker(): Generator
+    final protected static function faker(): Generator
     {
         return self::$faker ??= Factory::create();
     }
@@ -26,7 +26,7 @@ abstract class UnitTestCase extends TestCase
      *     content: array
      * }
      */
-    final static protected function richText(): array
+    final protected static function richText(): array
     {
         return [
             'type' => 'doc',
@@ -36,11 +36,11 @@ abstract class UnitTestCase extends TestCase
                     'content' => [
                         [
                             'text' => self::faker()->sentence(),
-                            'type' => 'text'
-                        ]
-                    ]
-                ]
-            ]
+                            'type' => 'text',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
