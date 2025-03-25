@@ -91,4 +91,30 @@ final class PostTest extends UnitTestCase
 
         self::assertSame($expected, (new Post($values))->category->name);
     }
+
+    /**
+     * @test
+     */
+    public function image(): void
+    {
+        $values = self::response();
+        $values['content']['image'] = [
+            'filename' => $expected = self::faker()->url(),
+            'alt' => self::faker()->sentence(),
+        ];
+
+        self::assertSame($expected, (new Post($values))->image->url);
+    }
+
+    /**
+     * @test
+     */
+    public function content(): void
+    {
+        $values = self::response(content: [
+            'content' => $expected = self::richText(),
+        ]);
+
+        self::assertSame($expected, (new Post($values))->content->values);
+    }
 }
