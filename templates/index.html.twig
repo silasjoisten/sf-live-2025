@@ -1,5 +1,49 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Welcome to MyBlog{% endblock %}
+
 {% block body %}
-    <h1>Hello World in "{{ locale }}"!</h1>
+    <h1 class="page-title">Welcome to MyBlog in {{ app.locale }}</h1>
+
+    <div class="category-list">
+        <a href="{{ path('index') }}" class="category-badge">All</a>
+        {% for category in categories %}
+            <a href="{{ path('index', { category: category.slug.value }) }}" class="category-badge">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="grid-list">
+        {% for post in posts %}
+            <article class="card">
+                <img class="card-img opacity-0" onload="this.classList.add('opacity-100')" src="{{ post.image.url }}" alt="{{ post.image.alt }}" />
+
+                <div class="card-content">
+                    <ul class="inline-list">
+                        <li>{{ post.author.name }}</li>
+                        <li>&centerdot;</li>
+                        <li>{{ post.category.name }}</li>
+                    </ul>
+
+                    <a href="#" class="card-title">{{ post.title.value }}</a>
+                    <p class="card-description">{{ post.description.value }}</p>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if (page - 1) < 1 %}
+            <span class="prev">← Previous</span>
+        {% else %}
+            <a class="prev" href="{{ path('index', { page: page - 1}) }}">← Previous</a>
+        {% endif %}
+
+        {% if max(1, total / limit)|round +1  <= page %}
+            <span class="next">Next →</span>
+        {% else %}
+            <a class="next" href="{{ path('index', { page: page + 1}) }}">Next →</a>
+        {% endif %}
+    </div>
 {% endblock %}
