@@ -28,9 +28,9 @@ final class DetailController extends AbstractController
         requirements: ['slug' => Slug::PATTERN],
         priority: -1000000,
     )]
-    public function index(Request $request, string $slug): Response
+    public function index(Request $request, Slug $slug): Response
     {
-        $response = $this->stories->bySlug($slug, new StoryRequest(
+        $response = $this->stories->bySlug($slug->value($request->getLocale()), new StoryRequest(
             language: $request->getLocale(),
             withRelations: new RelationCollection([
                 new Relation('post.author'),
