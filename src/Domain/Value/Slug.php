@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Value;
 
 use Webmozart\Assert\Assert;
+use function Symfony\Component\String\u;
 
 final readonly class Slug
 {
@@ -18,10 +19,22 @@ final readonly class Slug
     public const string PATTERN = '([\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*(?:\/[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*)*\/?)$';
 
     public function __construct(
-        public string $value,
+        private string $value,
     ) {
         Assert::stringNotEmpty($value);
         Assert::notWhitespaceOnly($value);
         Assert::regex($value, \sprintf('/%s/', self::PATTERN));
+    }
+
+    public function value(string $locale = 'en'): string
+    {
+        if ('en' === $locale) {
+            return $this->value;
+        }
+
+        return u($this->value)
+            ->trimStart($locale)
+            ->trimStart('/')
+            ->toString();
     }
 }
