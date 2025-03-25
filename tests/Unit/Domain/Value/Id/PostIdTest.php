@@ -26,6 +26,6 @@ final class PostIdTest extends UnitTestCase
     {
         self::expectException(\InvalidArgumentException::class);
 
-        new PostId(self::faker()->numberBetween(-5000,0));
+        new PostId(self::faker()->numberBetween(-5000, 0));
     }
 }
