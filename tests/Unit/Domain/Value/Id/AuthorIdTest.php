@@ -26,6 +26,6 @@ final class AuthorIdTest extends UnitTestCase
     {
         self::expectException(\InvalidArgumentException::class);
 
-        new AuthorId(self::faker()->numberBetween(-5000,0));
+        new AuthorId(self::faker()->numberBetween(-5000, 0));
     }
 }
