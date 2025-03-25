@@ -18,4 +18,14 @@ final class AuthorIdTest extends UnitTestCase
 
         self::assertSame($expected, (new AuthorId($expected))->value);
     }
+
+    /**
+     * @test
+     */
+    public function invalid(): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        new AuthorId(self::faker()->numberBetween(-5000, 0));
+    }
 }

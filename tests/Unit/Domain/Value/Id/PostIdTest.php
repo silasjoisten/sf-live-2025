@@ -18,4 +18,14 @@ final class PostIdTest extends UnitTestCase
 
         self::assertSame($expected, (new PostId($expected))->value);
     }
+
+    /**
+     * @test
+     */
+    public function invalid(): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        new PostId(self::faker()->numberBetween(-5000, 0));
+    }
 }
