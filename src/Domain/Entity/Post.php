@@ -6,6 +6,8 @@ namespace App\Domain\Entity;
 
 use App\Domain\Value\Description;
 use App\Domain\Value\Id\PostId;
+use App\Domain\Value\Image;
+use App\Domain\Value\RichText;
 use App\Domain\Value\Slug;
 use App\Domain\Value\Title;
 
@@ -17,6 +19,8 @@ final readonly class Post
     public Description $description;
     public Author $author;
     public Category $category;
+    public RichText $content;
+    public Image $image;
 
     public function __construct(array $values)
     {
@@ -27,5 +31,7 @@ final readonly class Post
         $this->description = new Description($values['description']);
         $this->author = new Author($values['author'][0]);
         $this->category = new Category($values['category'][0]);
+        $this->content = new RichText($values['content']);
+        $this->image = new Image($values['image']['filename'], $values['image']['alt']);
     }
 }
