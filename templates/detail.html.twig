@@ -21,7 +21,7 @@
         <p class="post-description">{{ post.description.value }}</p>
 
         <div class="post-content">
-{#            {{ post.content|rich_text|raw }}#}
+            {{ post.content.values|rich_text|raw }}
         </div>
 
         <!-- Back to List Button -->
