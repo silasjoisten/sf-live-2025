@@ -17,7 +17,7 @@
                         <li>{{ post.category.name }}</li>
                     </ul>
 
-                    <a href="#" class="card-title">{{ post.title.value }}</a>
+                    <a href="{{ path('detail', { slug: post.slug.value }) }}" class="card-title">{{ post.title.value }}</a>
                     <p class="card-description">{{ post.description.value }}</p>
                 </div>
             </article>
