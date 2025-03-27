@@ -1,0 +1,77 @@
+name: API Platform Introduction
+title: Building RESTful APIs with API Platform and Symfony
+title-de: Entwicklung von RESTful APIs mit API Platform und Symfony
+description: "Discover how to build professional RESTful APIs with minimal effort using API Platform and Symfony, featuring declarative API design and powerful customization options."
+body: |
+  # Building RESTful APIs with API Platform and Symfony
+
+  ## Create Professional APIs with Minimal Effort
+
+  API Platform has transformed how developers build APIs in the Symfony ecosystem, offering a comprehensive toolset that combines the best practices of REST and GraphQL. This framework extension provides everything needed to create modern, hypermedia-driven web APIs with minimal effort while maintaining full control over your resources.
+
+  ### Declarative API Design
+
+  At its core, API Platform leverages PHP attributes (or annotations in older versions) to expose your entities as API resources. This declarative approach means you can define your API's structure directly in your domain model.
+
+  ```php
+  namespace App\Entity;
+
+  use ApiPlatform\Metadata\ApiResource;
+  use Doctrine\ORM\Mapping as ORM;
+  use Symfony\Component\Validator\Constraints as Assert;
+
+  #[ORM\Entity]
+  #[ApiResource(
+      description: 'A blog post',
+      paginationItemsPerPage: 20
+  )]
+  class BlogPost
+  {
+      #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+      private ?int $id = null;
+
+      #[ORM\Column]
+      #[Assert\NotBlank]
+      public string $title = '';
+
+      #[ORM\Column(type: 'text')]
+      public string $content = '';
+
+      // ... getters and setters
+  }
+  ```
+
+  The magic happens when you annotate a Doctrine entity with `#[ApiResource]` - suddenly, that entity becomes available through your API with full CRUD operations. The framework handles content negotiation, serialization, validation, and even generates OpenAPI documentation automatically, saving you from writing boilerplate code.
+
+  ### Fine-Grained Customization
+
+  Customization is where API Platform truly shines. While the default configuration works for simple cases, real-world APIs often require fine-tuned control.
+
+  **Common customization points:**
+
+  * **Operations** - Control which CRUD operations are available
+  * **Serialization groups** - Determine which properties are exposed
+  * **Validation** - Apply different validation rules per operation
+  * **Security** - Define who can access which resources
+
+  ```php
+  #[ApiResource(
+      operations: [
+          new GetCollection(),
+          new Get(),
+          new Post(
+              security: "is_granted('ROLE_EDITOR')",
+              validationContext: ['groups' => ['create']]
+          ),
+          new Put(
+              security: "is_granted('ROLE_EDITOR') or object.getAuthor() == user",
+              denormalizationContext: ['groups' => ['update']]
+          ),
+          new Delete(security: "is_granted('ROLE_ADMIN')")
+      ],
+      normalizationContext: ['groups' => ['read']],
+      denormalizationContext: ['groups' => ['write']]
+  )]
+  ```
+
+  You can customize operations, serialization groups, validation constraints, and security rules at both the resource and operation levels. Need to implement custom business logic? API Platform's state processors and providers allow you to hook into the request lifecycle and modify how resources are created, retrieved, updated, or deleted. This flexibility means you're never constrained by the framework's opinions and can adapt it to fit your specific business requirements.

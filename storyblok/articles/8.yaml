@@ -1,0 +1,38 @@
+name: Symfony Deployment
+title: Zero-Downtime Deployment Strategies for Symfony Applications
+title-de: Zero-Downtime-Bereitstellungsstrategien für Symfony-Anwendungen
+description: "Master zero-downtime deployment strategies for Symfony applications using blue-green deployment, safe database migrations, and automated tooling to ensure continuous availability."
+body: |
+  # Zero-Downtime Deployment Strategies for Symfony Applications
+
+  ## Keeping Your Application Available During Updates
+
+  Deploying Symfony applications without service interruption requires careful planning and the right infrastructure setup. Zero-downtime deployment ensures that users experience no disruption while you roll out new features, bug fixes, or security updates to your production environment.
+
+  ### Blue-Green Deployment Pattern
+
+  The blue-green deployment strategy has become a standard approach for achieving zero downtime. This technique involves maintaining two identical production environments, with only one active at any given time.
+
+  ![Blue-Green Deployment](https://example.com/blue-green-deployment.png)
+
+  **Implementation steps:**
+
+  1. **Maintain two environments**: Blue (current production) and Green (staging)
+  2. **Deploy to inactive environment**: Push your changes to Green
+  3. **Run preparation tasks**:
+     ```bash
+     # In the Green environment
+     php bin/console cache:clear
+     php bin/console doctrine:migrations:migrate --no-interaction
+     php bin/console cache:warmup
+     ```
+  4. **Run smoke tests** on Green to verify functionality
+  5. **Switch traffic**: Update load balancer to direct traffic to Green
+  6. **Monitor**: Watch for any issues with the new deployment
+  7. **Rollback if needed**: Switch back to Blue if problems occur
+
+  With Symfony applications, this approach works particularly well because you can prepare the new environment by running migrations, clearing caches, and compiling assets before exposing it to users. Tools like Deployer, Ansible, or platform-specific solutions like AWS Elastic Beanstalk's immutable deployments can help implement this pattern.
+
+  ### Database Migration Strategies
+
+  Database migrations present one of the biggest challenges in zero-downtime deployments. Schema changes must be backward compatible with both the old and new versions of your application during the transition period.

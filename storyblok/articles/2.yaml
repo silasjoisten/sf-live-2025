@@ -1,0 +1,64 @@
+name: Twig Templates Guide
+title: Mastering Twig Templates in Symfony
+title-de: Meistern von Twig-Templates in Symfony
+description: "Learn how to master Twig templates in Symfony with advanced techniques for template inheritance, organization strategies, and reusable components to create maintainable view layers."
+body: |
+  # Mastering Twig Templates in Symfony
+
+  ## The Art of Dynamic Content Presentation
+
+  Twig has revolutionized how developers handle templates in PHP applications, offering a perfect balance between simplicity and power. As Symfony's default templating engine, Twig provides elegant syntax for creating dynamic, reusable templates while maintaining good separation between logic and presentation.
+
+  ### Template Inheritance
+
+  The inheritance system is perhaps Twig's most powerful feature. Using blocks and extends, you can create a base layout template with defined regions that child templates can override.
+
+  ```twig
+  {# base.html.twig #}
+  <!DOCTYPE html>
+  <html>
+      <head>
+          <title>{% block title %}Welcome!{% endblock %}</title>
+          {% block stylesheets %}{% endblock %}
+      </head>
+      <body>
+          {% block body %}{% endblock %}
+          {% block javascripts %}{% endblock %}
+      </body>
+  </html>
+
+  {# page.html.twig #}
+  {% extends 'base.html.twig' %}
+
+  {% block title %}My Page Title{% endblock %}
+
+  {% block body %}
+      <h1>Welcome to my page!</h1>
+  {% endblock %}
+  ```
+
+  This approach promotes DRY (Don't Repeat Yourself) principles and creates a consistent look across your application. Start by designing a comprehensive base template with blocks for common elements like header, footer, and content sections. Then, child templates can selectively override only the blocks they need to customize.
+
+  ### Organized Template Structure
+
+  Template organization becomes increasingly important as your project grows. Consider organizing templates by functionality rather than by type, keeping related templates together.
+
+  **Recommended structure:**
+
+  ```
+  templates/
+  ├── base.html.twig
+  ├── components/
+  │   ├── alert.html.twig
+  │   └── pagination.html.twig
+  ├── user/
+  │   ├── profile.html.twig
+  │   ├── settings.html.twig
+  │   └── _user_card.html.twig
+  └── blog/
+      ├── list.html.twig
+      ├── show.html.twig
+      └── _comment_form.html.twig
+  ```
+
+  For instance, place all templates related to user management in a "user" directory. Additionally, leverage Twig's include and embed functions to break down complex templates into manageable, reusable components. This modular approach makes maintenance easier and encourages component reuse across your application.

@@ -1,0 +1,111 @@
+name: Symfony Security
+title: Implementing Advanced Security Features in Symfony
+title-de: Implementierung erweiterter Sicherheitsfunktionen in Symfony
+description: "Implement robust security in your Symfony applications with modern authentication systems, fine-grained authorization using voters, and protection against common web vulnerabilities."
+body: |
+  # Implementing Advanced Security Features in Symfony
+
+  ## Building Robust Protection for Your Applications
+
+  Security is a cornerstone of any web application, and Symfony provides one of the most comprehensive security systems among PHP frameworks. The security component offers a flexible architecture that can be tailored to meet the requirements of simple applications as well as enterprise-grade systems with complex authorization needs.
+
+  ### Modern Authentication System
+
+  Authentication in Symfony has evolved significantly in recent versions, with the introduction of authenticators replacing the older guard system. This approach gives developers more control over the authentication process while maintaining a clean, object-oriented design.
+
+  ```php
+  // security.yaml
+  security:
+      password_hashers:
+          App\Entity\User: 'auto'
+
+      providers:
+          app_user_provider:
+              entity:
+                  class: App\Entity\User
+                  property: email
+
+      firewalls:
+          main:
+              lazy: true
+              provider: app_user_provider
+              custom_authenticator: App\Security\LoginFormAuthenticator
+              logout:
+                  path: app_logout
+
+              # Enable different auth methods
+              json_login:
+                  check_path: api_login
+
+              # Remember me functionality
+              remember_me:
+                  secret: '%kernel.secret%'
+                  lifetime: 604800 # 1 week
+  ```
+
+  Whether you're implementing traditional form login, API tokens, or OAuth integration, the authenticator system provides a consistent interface. One particularly powerful feature is the ability to chain multiple authenticators, allowing your application to support different authentication methods simultaneously, such as session-based authentication for browsers and token-based authentication for API clients.
+
+  ### Fine-Grained Authorization with Voters
+
+  While authentication identifies who is accessing your system, authorization determines what they can do. Symfony's Voter system excels in handling complex permission logic that goes beyond simple role-based access control.
+
+  ```php
+  namespace App\Security\Voter;
+
+  use App\Entity\BlogPost;
+  use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+  use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+  use Symfony\Component\Security\Core\User\UserInterface;
+
+  class BlogPostVoter extends Voter
+  {
+      const VIEW = 'view';
+      const EDIT = 'edit';
+
+      protected function supports(string $attribute, mixed $subject): bool
+      {
+          return in_array($attribute, [self::VIEW, self::EDIT])
+              && $subject instanceof BlogPost;
+      }
+
+      protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+      {
+          $user = $token->getUser();
+
+          if (!$user instanceof UserInterface) {
+              return false;
+          }
+
+          /** @var BlogPost $post */
+          $post = $subject;
+
+          return match($attribute) {
+              self::VIEW => true, // Anyone can view
+              self::EDIT => $this->canEdit($post, $user),
+              default => false,
+          };
+      }
+
+      private function canEdit(BlogPost $post, UserInterface $user): bool
+      {
+          // Owner can edit
+          if ($post->getAuthor() === $user) {
+              return true;
+          }
+
+          // Admins can edit any post
+          if (in_array('ROLE_ADMIN', $user->getRoles())) {
+              return true;
+          }
+
+          // Editors can edit unpublished posts
+          if (in_array('ROLE_EDITOR', $user->getRoles()) && !$post->isPublished()) {
+              return true;
+          }
+
+          return false;
+      }
+  }
+  ```
+
+  Voters allow you to encapsulate authorization rules in dedicated classes, making them testable and maintainable. For instance, you might create a PostVoter that determines if a user can edit a blog post based on ownership, publication status, and user roles. This approach keeps your controllers clean and enforces the single responsibility principle. Combined with hierarchical roles and expression-based access controls, Symfony's authorization system can handle even the most sophisticated permission models.

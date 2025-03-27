@@ -1,0 +1,94 @@
+name: Symfony Messenger
+title: Asynchronous Processing with Symfony Messenger
+title-de: Asynchrone Verarbeitung mit Symfony Messenger
+description: "Harness the power of asynchronous processing in Symfony with the Messenger component to build scalable applications that handle background tasks efficiently with robust error recovery."
+body: |
+  # Asynchronous Processing with Symfony Messenger
+
+  ## Building Scalable Applications with Background Processing
+
+  Modern web applications often need to perform time-consuming tasks without blocking the main request-response cycle. Symfony Messenger provides an elegant solution to this challenge, offering a message bus system that supports both synchronous and asynchronous processing patterns.
+
+  ### Message Bus Architecture
+
+  At its simplest, Messenger implements the command bus pattern, allowing you to decouple the dispatching of a command from its handling.
+
+  ```php
+  // Message class
+  class SendNotificationEmail
+  {
+      public function __construct(
+          public readonly string $recipient,
+          public readonly string $subject,
+          public readonly string $content
+      ) {
+      }
+  }
+
+  // Handler
+  class SendNotificationEmailHandler implements MessageHandlerInterface
+  {
+      public function __construct(
+          private MailerInterface $mailer
+      ) {
+      }
+
+      public function __invoke(SendNotificationEmail $message)
+      {
+          $email = (new Email())
+              ->to($message->recipient)
+              ->subject($message->subject)
+              ->html($message->content);
+
+          $this->mailer->send($email);
+      }
+  }
+
+  // In a controller
+  public function register(Request $request, MessageBusInterface $bus)
+  {
+      // Process registration...
+
+      // Dispatch email notification to be handled asynchronously
+      $bus->dispatch(new SendNotificationEmail(
+          $user->getEmail(),
+          'Welcome to our platform',
+          '<p>Thank you for registering!</p>'
+      ));
+
+      return $this->redirectToRoute('homepage');
+  }
+  ```
+
+  This alone improves your application's architecture by promoting clear separation of concerns. However, Messenger's true power emerges when you configure transport systems like RabbitMQ, Redis, or Doctrine to handle messages asynchronously. With a few lines of configuration, you can send emails, generate reports, or process uploads in the background, dramatically improving your application's responsiveness and user experience.
+
+  ### Robust Error Handling
+
+  Error handling in asynchronous systems presents unique challenges, which Messenger addresses through retry strategies and failure transport mechanisms.
+
+  **messenger.yaml configuration:**
+  ```yaml
+  framework:
+      messenger:
+          failure_transport: failed
+
+          transports:
+              async:
+                  dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                  options:
+                      queue_name: default
+                  retry_strategy:
+                      max_retries: 3
+                      # Use exponential backoff
+                      multiplier: 2
+                      delay: 1000 # milliseconds
+              failed:
+                  dsn: 'doctrine://default?queue_name=failed'
+
+          routing:
+              'App\Message\SendNotificationEmail': async
+              'App\Message\ProcessPayment': async
+              'App\Message\GenerateReport': async
+  ```
+
+  When a message handler throws an exception, Messenger can automatically retry the message according to your defined strategy - perhaps waiting longer between each attempt. If the message continues to fail after exhausting retry attempts, it can be sent to a failure transport for later inspection and manual intervention. This robust error handling ensures that temporary issues don't result in lost operations, while permanent failures are properly captured for investigation.
