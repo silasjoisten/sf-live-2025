@@ -1,0 +1,47 @@
+name: Doctrine Performance
+title: Optimizing Doctrine ORM for High-Performance Applications
+title-de: Optimierung von Doctrine ORM für Hochleistungsanwendungen
+description: "Optimize your Doctrine ORM implementation with practical strategies for query optimization, smart entity hydration, and performance tweaks that will make your database layer blazing fast."
+body: |
+  # Optimizing Doctrine ORM for High-Performance Applications
+
+  ## Making Your Database Layer Blazing Fast
+
+  Doctrine ORM provides an elegant way to work with databases in Symfony applications, but without proper optimization, it can become a performance bottleneck. Understanding how Doctrine works behind the scenes is essential for building high-performance applications that scale effectively.
+
+  ### Smart Query Optimization
+
+  Query optimization should be your first focus when improving Doctrine performance. The QueryBuilder is powerful but can generate inefficient SQL if used carelessly.
+
+  ```php
+  // AVOID: Selecting all fields when you only need a few
+  $users = $repository->findAll();
+
+  // BETTER: Select only what you need
+  $users = $repository->createQueryBuilder('u')
+      ->select('u.id, u.username, u.email')
+      ->getQuery()
+      ->getResult();
+
+  // EVEN BETTER for read-only operations: Use array hydration
+  $users = $repository->createQueryBuilder('u')
+      ->select('u.id, u.username, u.email')
+      ->getQuery()
+      ->getResult(Query::HYDRATE_ARRAY);
+  ```
+
+  Always select only the fields you need instead of using SELECT * patterns. For read-heavy operations, consider using DQL (Doctrine Query Language) directly or even native SQL queries through the NativeQueryBuilder. Additionally, make proper use of JOINs to reduce the number of queries, but be cautious about over-joining, which can lead to Cartesian products and memory issues.
+
+  ### Efficient Entity Hydration
+
+  The second most critical aspect is entity hydration. By default, Doctrine converts database results into fully-fledged entity objects, which is convenient but resource-intensive.
+
+  **Hydration modes to consider:**
+
+  | Mode | Use case | Performance |
+  |------|----------|-------------|
+  | `HYDRATE_OBJECT` | Default, when you need entities | Slowest |
+  | `HYDRATE_ARRAY` | Read-only operations | Fast |
+  | `HYDRATE_SCALAR` | Simple data retrieval | Fastest |
+
+  For read-only operations, consider using array hydration mode or scalar results when you don't need entity functionality. The EntityRepository's findBy methods accept a hydration mode parameter for this exact purpose. In high-traffic applications, this simple change can dramatically reduce memory usage and processing time, especially when dealing with large result sets.

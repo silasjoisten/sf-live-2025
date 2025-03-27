@@ -1,0 +1,94 @@
+name: Symfony with React
+title: Integrating React with Symfony Applications
+title-de: Integration von React in Symfony-Anwendungen
+description: "Learn practical strategies for integrating React with Symfony applications through Webpack Encore, creating hybrid applications that leverage both server-side and client-side rendering."
+body: |
+  # Integrating React with Symfony Applications
+
+  ## Combining the Best of Both Worlds
+
+  The combination of Symfony's robust backend capabilities with React's dynamic frontend features creates a powerful stack for modern web applications. While these technologies operate in different domains, they can be seamlessly integrated to leverage the strengths of both frameworks.
+
+  ### Setting Up Webpack Encore
+
+  Webpack Encore provides the foundation for this integration, serving as a bridge between Symfony's asset management and modern JavaScript development.
+
+  **Installation:**
+  ```bash
+  # Install Encore in your Symfony project
+  composer require symfony/webpack-encore-bundle
+
+  # Install Node dependencies
+  yarn add @babel/preset-react --dev
+  yarn add react react-dom prop-types
+  ```
+
+  **webpack.config.js:**
+  ```javascript
+  const Encore = require('@symfony/webpack-encore');
+
+  Encore
+      // Directory where compiled assets will be stored
+      .setOutputPath('public/build/')
+      // Public path used by the web server
+      .setPublicPath('/build')
+
+      // Only needed for CDN's or subdirectory deploy
+      //.setManifestKeyPrefix('build/')
+
+      // Enable React preset
+      .enableReactPreset()
+
+      // Entry points
+      .addEntry('app', './assets/app.js')
+      .addEntry('admin', './assets/admin.js')
+
+      // When enabled, Webpack "splits" your files into smaller chunks
+      .splitEntryChunks()
+
+      // Enables @symfony/stimulus-bridge integration
+      .enableStimulusBridge('./assets/controllers.json')
+
+      // Enable features
+      .enableSingleRuntimeChunk()
+      .cleanupOutputBeforeBuild()
+      .enableBuildNotifications()
+      .enableSourceMaps(!Encore.isProduction())
+      .enableVersioning(Encore.isProduction())
+  ;
+
+  module.exports = Encore.getWebpackConfig();
+  ```
+
+  With Encore, you can easily configure your React build process, including JSX transpilation, module bundling, and environment-specific optimizations. The asset versioning ensures proper cache invalidation when your React components change, while still benefiting from browser caching for unchanged assets. Setting up Encore is straightforward with the WebpackEncoreBundle, which provides Twig functions to include the compiled assets in your templates.
+
+  ### API Communication Strategy
+
+  For data exchange between Symfony and React, a well-designed API is essential.
+
+  **Typical Symfony-React architecture:**
+
+  ```
+  ┌─────────────────────────────────┐
+  │ Symfony Application             │
+  │                                 │
+  │  ┌───────────────┐ ┌─────────┐ │
+  │  │ API Controller │ │ Twig    │ │
+  │  │               │ │ Template │ │
+  │  └───────┬───────┘ └────┬────┘ │
+  └──────────┼──────────────┼──────┘
+             │              │
+  ┌──────────┼──────────────┼──────┐
+  │ Browser  │              │      │
+  │          ▼              ▼      │
+  │    ┌───────────┐  ┌──────────┐ │
+  │    │ React App │  │ HTML Page│ │
+  │    │           │  │  with    │ │
+  │    │           │  │ React    │ │
+  │    │           │  │ mount    │ │
+  │    │           │  │ points   │ │
+  │    └───────────┘  └──────────┘ │
+  └─────────────────────────────────┘
+  ```
+
+  While you could build a full-fledged API with API Platform, many applications benefit from a hybrid approach where some pages are rendered server-side with Twig, while others are handled by React components that consume API endpoints. This approach allows for incremental adoption of React in existing Symfony applications. For the API itself, consider standardizing on JSON:API or a similar specification to ensure consistent response formats. Symfony's serializer component, combined with proper resource normalization, makes it easy to expose exactly the data your React components need without oversharing information.

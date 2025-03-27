@@ -1,0 +1,77 @@
+name: Symfony Cache
+title: Advanced Caching Techniques in Symfony Applications
+title-de: Fortgeschrittene Caching-Techniken in Symfony-Anwendungen
+description: "Maximize performance in your Symfony applications with advanced caching techniques, including HTTP caching, ESI fragments, and application-level caching patterns with various adapters."
+body: |
+  # Advanced Caching Techniques in Symfony Applications
+
+  ## Maximizing Performance Through Strategic Caching
+
+  Caching is a critical strategy for optimizing the performance of Symfony applications, reducing database load, and improving response times. Symfony's Cache component provides a powerful abstraction layer that supports various cache backends while maintaining a consistent interface throughout your application.
+
+  ### HTTP Caching Strategies
+
+  HTTP caching represents the first line of defense in a comprehensive caching strategy. Symfony's HttpCache can serve as a reverse proxy, storing responses based on cache headers and serving them directly without executing your application code.
+
+  ```php
+  // In a controller
+  public function listProducts(ProductRepository $repository): Response
+  {
+      $products = $repository->findActive();
+
+      $response = $this->render('product/list.html.twig', [
+          'products' => $products,
+      ]);
+
+      // Cache publicly for 3600 seconds (1 hour)
+      $response->setPublic();
+      $response->setMaxAge(3600);
+
+      // Revalidate cache after expiration using ETag
+      $response->setEtag(md5(serialize($products)));
+
+      // Support for returning 304 Not Modified
+      $response->isNotModified($request);
+
+      return $response;
+  }
+  ```
+
+  To leverage this effectively, use the Response object to set appropriate Cache-Control, ETag, and Last-Modified headers. For dynamic content that shares common elements, consider using ESI (Edge Side Includes) to compose pages from multiple fragments with different caching policies. This approach allows you to cache relatively static parts of your page while still keeping dynamic elements fresh.
+
+  ### Application-Level Caching Patterns
+
+  Beyond HTTP caching, application-level caching helps optimize resource-intensive operations. The Cache component supports various item pools, from simple array caches for development to distributed systems like Redis or Memcached for production.
+
+  **Available cache adapters:**
+
+  * `FilesystemAdapter` - Stores cache on the filesystem
+  * `RedisAdapter` - Uses Redis for distributed caching
+  * `MemcachedAdapter` - Uses Memcached for distributed caching
+  * `ApcuAdapter` - Uses APCu for in-memory caching
+  * `PDOAdapter` - Stores cache in a database
+  * `ChainAdapter` - Combines multiple adapters
+
+  ```php
+  // services.yaml
+  services:
+      cache.app.redis:
+          class: Symfony\Component\Cache\Adapter\RedisAdapter
+          factory: ['Symfony\Component\Cache\Adapter\RedisAdapter', 'createConnection']
+          arguments:
+              - '%env(REDIS_URL)%'
+
+  // In a service
+  public function getExpensiveData(string $id, CacheInterface $cache)
+  {
+      // The compute-and-store pattern
+      return $cache->get('data_'.$id, function(ItemInterface $item) use ($id) {
+          $item->expiresAfter(3600); // Cache for 1 hour
+
+          // This expensive operation only runs on cache miss
+          return $this->computeExpensiveData($id);
+      });
+  }
+  ```
+
+  One particularly effective pattern is the "compute and store" approach using the `get()` method with a callback. This pattern ensures that expensive computations happen only when necessary while keeping your code clean and readable. For even more control, consider cache stampede protection with lock mechanisms when working with high-traffic applications where multiple concurrent requests might try to regenerate the same cache item simultaneously.

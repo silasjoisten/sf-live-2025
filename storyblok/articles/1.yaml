@@ -1,0 +1,41 @@
+name: Symfony Best Practices
+title: 10 Best Practices Every Symfony Developer Should Know
+title-de: 10 Best Practices, die jeder Symfony-Entwickler kennen sollte
+description: "A comprehensive guide covering essential Symfony best practices including dependency injection, testing strategies, and code organization that every developer should implement for maintainable applications."
+body: |
+  # 10 Best Practices Every Symfony Developer Should Know
+
+  ## The Foundation of Quality Symfony Applications
+
+  Symfony has emerged as one of the most powerful PHP frameworks, providing developers with robust tools to build complex web applications. However, with great power comes great responsibility. Understanding and implementing best practices is crucial to leverage Symfony's full potential.
+
+  ### 1. Proper Dependency Injection
+
+  One of the most important practices is proper dependency injection. Symfony's service container is designed to handle dependencies elegantly, reducing coupling between components and making your code more testable.
+
+  ```php
+  // DON'T do this
+  public function someAction()
+  {
+      $service = new SomeService();
+      // ...
+  }
+
+  // DO this instead
+  public function __construct(
+      private SomeService $someService
+  ) {
+  }
+  ```
+
+  Always define your services in configuration rather than creating them manually, and use constructor injection whenever possible. This approach not only makes your code cleaner but also ensures better performance as Symfony can optimize service instantiation.
+
+  ### 2. Comprehensive Testing Strategy
+
+  Testing should never be an afterthought in Symfony applications. The framework provides excellent tools for unit and functional testing, allowing you to verify both individual components and entire request-response cycles.
+
+  * **Unit tests** - Test individual classes and methods
+  * **Functional tests** - Test entire features and user flows
+  * **Integration tests** - Test how components work together
+
+  Aim for high test coverage, especially for business-critical functionality, and make use of Symfony's test client to simulate HTTP requests. Remember that a well-tested application is easier to maintain and extend, saving you countless hours of debugging in the long run.
